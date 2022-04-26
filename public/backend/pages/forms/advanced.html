@@ -1,0 +1,277 @@
+@extends('backend.layouts.app')
+@section('content')
+<!-- Content Header (Page header) -->
+@push('styles')
+<link href="{{ asset('css/select2/select2.min.css') }}" rel="stylesheet">
+<link href="{{ asset('css/datetimepicker/bootstrap-datetimepicker.min.css') }}" rel="stylesheet">
+@endpush
+
+@inject('AcademicService', 'App\Services\AcademicService')
+@inject('CountryService', 'App\Services\CountryService')
+<div class="content-header">
+    <h1>
+        Manage
+        <small>Scholarship</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href=""><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="">Scholarships</a></li>
+        <li class="active"> scholarship</li>
+    </ol>
+</div>
+
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+           <form action="" enctype="multipart/form-data" method="POST">
+            {{ csrf_field() }}
+             
+           
+            <div class="box ">
+                <div class="box-header">
+                        <button type="submit" class="btn btn-primary btn-sm pull-right">
+                                <i class="fa fa-save"></i> 
+                            </button>
+                    <h3 class="box-title"> <i class="fa fa-plus-circle"></i> Scholarship</h3>
+                </div>
+                <!-- /.box-header -->
+                    <div class="box-body">
+                                {{-- Left Side --}}
+                               <div class="col-md-8" style="border-right: 1px solid #ECF0F5">
+                                <div class="row">
+                                        <div class="col-xs-12 form-group">
+                                            <label for="scholarship_title">Title:</label>
+                                            <input type="text" name="scholarship_title"
+                                                   value="" class="form-control"
+                                                   placeholder="Title"
+                                            >
+                                           
+                                        </div>
+                                </div>
+                                <div class="row">
+                                        <div class="col-xs-3 form-group ">
+                                            <label for="published_up">Start Published Date:</label>
+                                            <input type="text" id="published_up" name="published_up" class="form-control datetime-picker"
+                                            value="" placeholder="Y-m-d H:i:s" readonly>
+
+                                           
+                                        </div>
+
+                                        <div class="col-xs-3 form-group ">
+                                            <label for="published_down">End Published Date :</label>
+                                            <input type="text" id="published_down" name="published_down" class="form-control datetime-picker"
+                                            value=""  placeholder="Y-m-d H:i:s" readonly>
+                                            
+                                        </div>
+                                        <div class="col-xs-3">
+                                            <label for="access_level">Access:</label>
+                                            <select name="access_level" id="access_level" class="form-control">
+                                                <option value="public"    >Public</option>
+                                                <option value="registered">Registered</option>
+                                                <option value="private" >Private</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-xs-3">
+                                            <label for="published">Published</label>
+                                            <select type="text"  id="published" class="form-control date-picker" name="published">
+                                                <option value="2"  >Yes</option>
+                                                <option value="1"  >No</option>
+                                            </select>
+                                        </div>
+                                </div>
+                                <div class="row">
+                                        <div class="box-body">
+                                            <div class="row">
+                                                <div class="col-xs-12 form-group {{ $errors->has('content') ? 'has-error' : ''}}">
+                                                    <label for="editor">Content <i class="text-muted"> <small>Preamble</small></i></label>
+                                                    <textarea id="editor"  name="content" class="textarea form-control"
+                                                        name="content"></textarea>
+                                                   
+                                                </div>
+                                            </div>
+                                        </div>
+                                </div>
+                                <div class="row">
+                                        <div class="box-body">
+                                            <div class="row">
+                                                <div class="col-xs-12 form-group {{ $errors->has('terms') ? 'has-error' : ''}}">
+                                                    <label for="editor1">Scholarship Terms and Condition:</label>
+                                                    <textarea id="editor1" name="terms" class="textarea form-control">{{ isset($edit) ? $item->content : old('terms') }}</textarea>
+                                                   
+                                                </div>
+                                            </div>
+                                        </div>
+                                </div>
+                                    <div class="row">
+                                            <div class="box-body">
+                                                <div class="row">
+                                                    <div class="col-xs-12">
+                                                        <label for="editor2">Scholarship Opportunity:</label>
+                                                        <textarea id="editor2" name="scholarship_opportunity"
+                                                            class="textarea form-control"></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                </div>
+                                {{-- Right Side --}}
+                                <div class="col-md-4">
+                                    <div class="row">
+                                            <div class="col-xs-12 form-group ">
+                                                    <label for="country_id">Countries:</label>
+                                                    <select name="countries[]" id="country_id" class="form-control select2-country" multiple>
+                                                       
+                                                            <option value="{{$country->id}}"
+                                                             
+                                                           </option>
+                                                        
+                                                    </select>
+                                                </div>
+                                    </div>
+                                    <div class="row">
+                                            <div class="col-xs-12 form-group ">
+                                                    <label for="academics">Academic :</label>
+                                                    <select id="academics" name="academics[]" class="form-control select2-academics" multiple>
+                                                       
+                                                        <option value="">
+                                                       </option>
+                                                       
+                                                    </select>
+                                            </div>
+                                    </div>
+                               
+                                    <div class="row academic_duration" id="section-3">
+                                        <div class="form-group col-xs-12">
+                                            <div class="row">
+                                                    <label for="" class="col-md-12">Bachelor Duration</label>
+                                            </div>
+                                            <div class="row">
+                                                    <div class="col-md-4">
+                                                            <input type="text" value="" name="bachelor_start_year" class="form-control" placeholder="Start year">
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                            <input type="text" value="" name="bachelor_end_year" class="form-control" placeholder="End Year">
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                            <input type="text" value="" name="bachelor_duration" class="form-control" placeholder="Duration">
+                                                    </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row academic_duration" id="section-4">
+                                            <div class="form-group col-xs-12">
+                                                <div class="row">
+                                                        <label for="" class="col-md-12">Masters Duration</label>
+                                                </div>
+                                                <div class="row">
+                                                        <div class="col-md-4">
+                                                                <input type="text"  value="" name="masters_start_year" value="{{ isset($edit) }}" class="form-control" placeholder="Start year">
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                                <input type="text"  value="" name="masters_end_year" class="form-control" placeholder="End Year">
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                                <input type="text"  value="" name="masters_duration" class="form-control" placeholder="Duration">
+                                                        </div>
+                                                </div>
+                                            </div>
+                                    </div>
+
+                                    <div class="row academic_duration" id="section-5">
+                                            <div class="form-group col-xs-12">
+                                                <div class="row">
+                                                        <label for="" class="col-md-12">PHD Duration</label>
+                                                </div>
+                                                <div class="row">
+                                                        <div class="col-md-4">
+                                                                <input type="text"  value="" name="phd_start_year" class="form-control" placeholder="Start year">
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                                <input type="text"  value="" name="phd_end_year" class="form-control" placeholder="End Year">
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                                <input type="text"  value="" name="phd_duration" class="form-control" placeholder="Duration">
+                                                        </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    <div class="row">
+                                            <div class="col-xs-12 form-group  ">
+                                                    <label for="mou_attachment">Memorundum of Understanding (MoU) :</label>
+                                                    <input type="file" name="mou_attachment" id="mou_attachment">
+                                                    
+                                            </div>
+                                    </div>
+                                    <div class="row">
+                                        <hr>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                                <fieldset>
+                                                        <legend class="text-primary text-medium">Requirements</legend>
+                                                       
+                                                        <div class="row">
+                                                            <div class="col-xs-12">
+                                                                    <div class="form-group">
+                                                                            <label for="medical">
+                                                                                <input name="medical"  type="checkbox" id="medical"
+                                                                               <span> Medical Attachment</span>
+                                                                            </label>
+                                                                    </div>
+                                                            </div>
+
+                                                            <div class="col-xs-12">
+                                                                    <div class="form-group">
+                                                                            <label for="recommendation">
+                                                                                <input name="recommendation" type="checkbox" id="recommendation"
+                                                                                
+                                                                                >
+                                                                                <span> Recommendation Letter</span>
+                                                                            </label>
+                                                                    </div>
+                                                            </div>
+
+                                                            <div class="col-xs-12">
+                                                                    <div class="form-group">
+                                                                            <label for="entrance">
+                                                                                <input name="entrance" type="checkbox" id="entrance"
+                                                                              
+                                                                                >
+                                                                                <span> Entrance Examination</span>
+                                                                            </label>
+                                                                    </div>
+                                                            </div>
+                                                        </div>
+                                                </fieldset>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <!-- /.box-body -->
+                            <!-- /.box-body -->
+                            <div class="box-footer">
+                                <div class="col-md-9">
+                                    <button type="submit" class="btn btn-primary pull-left">
+                                        <i class="fa fa-save"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.box -->
+            </form>
+            </div>
+            <!-- /.col -->
+        </div>
+        </
+        <!-- /.row -->
+</section>
+@endsection
+@push('scripts')
+<script src="{{ asset('js/ckeditor_4.12.1/'. (UserPreferences::get('editor') ? UserPreferences::get('editor') : 'standard')).'/ckeditor.js' }}"></script>
+<script type="text/javascript" src="{{ asset('js/select2/select2.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/scholarship/create_scholarship.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/datetimepicker/bootstrap-datetimepicker.min.js') }}"></script>
+@endpush
